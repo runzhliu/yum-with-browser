@@ -19,7 +19,7 @@ RUN <<-EOF cat >> /server.sh
     cd /srv/yum && createrepo --update .
 EOF
 
-RUN yum install -y createrepo crontabs && \
+RUN yum install -y createrepo crontabs && chmod +x /server.sh /cron.sh && \
  echo '*/1 * * * * /bin/sh /cron.sh >> /var/log/yum_crontab.log' > /var/spool/cron/root
 
 CMD "/server.sh"
