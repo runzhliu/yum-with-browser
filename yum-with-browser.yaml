@@ -1,0 +1,39 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: yum-with-browser
+  labels:
+    run: yum-with-browser
+spec:
+  restartPolicy: Never
+  volumes:
+    - name: yum-data-persistent-storage
+      emptyDir: {}
+  containers:
+    - name: sre-yum
+      image: runzhliu/yum-with-browser
+      imagePullPolicy: Always
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - name: yum-data-persistent-storage
+          mountPath: /srv
+    - name: filebrowser
+      image: filebrowser/filebrowser
+      volumeMounts:
+        - name: yum-data-persistent-storage
+          mountPath: /srv
+#---
+# 如果有持久化存储，那是更好的
+#apiVersion: v1
+#kind: PersistentVolumeClaim
+#metadata:
+#  name: yum-data-claim
+#spec:
+#  storageClassName: longhorn
+#  accessModes:
+#    - ReadWriteOnce
+#  resources:
+#    requests:
+#      storage: 1Gi
