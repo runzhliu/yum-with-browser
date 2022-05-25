@@ -39,3 +39,7 @@ yum --disablerepo=* --enablerepo=sre install vim -y
 ```shell
 DOCKER_BUILDKIT=1 docker build -t runzhliu/yum-with-browser . --progress=plain
 ```
+
+![img.png](img.png)
+
+![img_1.png](img_1.png)
