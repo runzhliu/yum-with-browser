@@ -4,13 +4,14 @@ FROM centos:7
 WORKDIR /srv/yum
 
 # https://github.com/moby/moby/issues/16058#issuecomment-881901519
-RUN <<-EOF cat >> /cron.sh
-    #!/usr/bin/env sh
+RUN <<-EOF cat >> /server.sh
+    #!/usr/bin/env sh \
+    set -x
     nohup crond &&
     python -m SimpleHTTPServer 8080
 EOF
 
-RUN <<-EOF cat >> /server.sh
+RUN <<-EOF cat >> /cron.sh
     #!/usr/bin/env sh
     set -x
     if [ ! -d "/srv/yum/repodata" ]; then
