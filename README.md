@@ -15,10 +15,13 @@ curl之类的。
 部署很简单，我甚至只写了一个Pod，Deployment都懒得搞了，所有的逻辑都在[Dockerfile](Dockerfile)
 
 ```shell
-kubectl run yum-file-browser --image=runzhliu/filebrowser --image-pull-policy=Always
+# 命令行启动yum服务器和文件浏览器
+kubectl run yum --image=runzhliu/sre-yum:latest --image-pull-policy=Always
+kubectl run yum-file-browser --image=filebrowser/filebrowser --image-pull-policy=Always
 kubectl expose po yum-with-browser --name=yum-with-browser --port=80 --target-port=80 --type=NodePort
-kubectl expose po yum-with-browser --name=yum --port=80 --target-port=8080
+kubectl expose po yum --name=yum --port=80 --target-port=80
 
+# 容器内访问只需要svc名，默认端口80即可
 cat >> /etc/yum.repos.d/sre.repo <<EOF
 [sre]
 name=sre yum repos
