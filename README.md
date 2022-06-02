@@ -19,7 +19,7 @@ curl之类的。
 kubectl run yum --image=runzhliu/sre-yum:latest --image-pull-policy=Always
 kubectl run yum-file-browser --image=filebrowser/filebrowser --image-pull-policy=Always
 kubectl expose po yum-with-browser --name=yum-with-browser --port=80 --target-port=80 --type=NodePort
-kubectl expose po yum --name=yum --port=80 --target-port=80
+kubectl expose po yum --name=yum --port=80 --target-port=8080 # 镜像里默认python的http server是8080
 
 # 容器内访问只需要svc名，默认端口80即可
 cat >> /etc/yum.repos.d/sre.repo <<EOF
