@@ -30,7 +30,7 @@ enable=1
 gpgcheck=0
 EOF
 # 上传一个rpm包
-yum --disablerepo=* --enablerepo=sre install vim -y
+yum --disableexcludes=sre install vim -y
 ```
 
 ## Notes
