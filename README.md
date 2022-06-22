@@ -2,26 +2,24 @@
 
 ## Overview
 
-目的是解决在k8s集群里一些yum源的问题。
+The purpose is to solve some yum source problems in the k8s cluster.
 
-为什么会有这个问题呢，因为通常来说k8s集群都只有集群网络，并不能直接通Internet，甚至是公司的LAN都不一定能通。所以有些同学在使用k8s部署应用的时候，尤其是把k8s当成虚拟机来用的同学，会觉得装软件很麻烦，因为通常的流程可能是只能在Dockerfile里就把需要安装的软件安装好，比如vim,
-curl之类的。
+Why is there such a problem? Generally speaking, k8s clusters only have a cluster network and cannot directly connect to the Internet, and even the company's LAN may not be able to connect. Therefore, when some students use k8s to deploy applications, especially those who use k8s as a virtual machine, they will find it very troublesome to install software, because the usual process may be to install the software that needs to be installed only in the Dockerfile. For example vim, curl etc.
 
-这个项目没有什么代码，仅仅是通过部署一个k8s工作负载，来部署一个私有化的yum源，并且**提供文件浏览器**的管理，这真的很重要，相比于常见的用Nginx
-或者httpd来创建一个私有化的源，有文件管理器的web浏览器实在是太好了（当然前提是至少能够通过Nodeport把服务暴露出来）。
+There is no code in this project, it just deploys a private yum source by deploying a k8s workload, and **provides the management of the file browser**, which is really important, compared to the common use of Nginx
+Or httpd to create a private source, a web browser with a file manager would be nice (provided that at least the service can be exposed via Nodeport).
 
-## 部署
+## Deploy
 
-部署很简单，我甚至只写了一个Pod，Deployment都懒得搞了，所有的逻辑都在[Dockerfile](Dockerfile)
-
+Deployment is very simple, everything is in [Dockerfile](Dockerfile)
 ```shell
-# 命令行启动yum服务器和文件浏览器
+# Command line to start yum server and file browser
 kubectl run yum --image=runzhliu/sre-yum:latest --image-pull-policy=Always
 kubectl run yum-file-browser --image=filebrowser/filebrowser --image-pull-policy=Always
 kubectl expose po yum-with-browser --name=yum-with-browser --port=80 --target-port=80 --type=NodePort
 kubectl expose po yum --name=yum --port=80 --target-port=8080 # 镜像里默认python的http server是8080
 
-# 容器内访问只需要svc名，默认端口80即可
+# Only the svc name is required for access in the container, and the default port is 80.
 cat >> /etc/yum.repos.d/sre.repo <<EOF
 [sre]
 name=sre yum repos
@@ -29,15 +27,15 @@ baseurl=http://yum
 enable=1
 gpgcheck=0
 EOF
-# 上传一个rpm包
+# Upload an rpm package
 yum --disableexcludes=sre install vim -y
 ```
 
 ## Notes
 
-当然不是一个这样的仓库就能够允许在容器里装什么软件都可以的，这里跟容器内本身的基础镜像的Linux版本，内核版本，以及基础镜像里已经有的软件有关系。
+Of course, not such a repository can allow any software to be installed in the container. This is related to the Linux version of the base image in the container itself, the kernel version, and the software already in the base image.
 
-重新编译镜像可以通过下面的命令来实现。
+Recompiling the image can be done with the following command.
 
 ```shell
 DOCKER_BUILDKIT=1 docker build -t runzhliu/yum-with-browser . --progress=plain
