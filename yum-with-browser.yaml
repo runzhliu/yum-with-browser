@@ -1,0 +1,53 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yum-with-browser
+  labels:
+    app: yum-with-browser
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: yum-with-browser
+  template:
+    metadata:
+      labels:
+        app: yum-with-browser
+    spec:
+      volumes:
+        - name: yum-data-persistent-storage
+          emptyDir: { }
+      containers:
+        - name: yum
+          image: runzhliu/yum-with-browser
+          imagePullPolicy: Always
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: yum-data-persistent-storage
+              mountPath: /srv
+        - name: filebrowser
+          image: filebrowser/filebrowser
+          volumeMounts:
+            - name: yum-data-persistent-storage
+              mountPath: /srv
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: yum-with-browser
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      name: yum
+      targetPort: 8080
+      protocol: TCP
+    - port: 80
+      name: filebrowser
+      targetPort: 80
+      protocol: TCP
+      nodePort: 32600
+  selector:
+    app: yum-with-browser
