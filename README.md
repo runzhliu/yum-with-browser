@@ -2,24 +2,24 @@
 
 ## Overview
 
-[yum-with-browser](https://github.com/runzhliu/yum-with-browser) 目的是解决在k8s集群里一些yum源的问题
+[yum-with-browser](https://github.com/runzhliu/yum-with-browser) aims to solve some yum source problems in the k8s cluster.
 
-为什么会有这个问题呢，因为通常来说k8s集群都只有集群网络，并不能直接通Internet，甚至是公司的LAN都不一定能通。所以有些同学在使用k8s部署应用的时候，尤其是把k8s当成虚拟机来用的同学，会觉得装软件很麻烦，因为通常的流程可能是只能在Dockerfile里就把需要安装的软件安装好，比如vim, curl之类的
+Why is there such a problem? Generally speaking, the k8s cluster only has a cluster network and cannot directly connect to the Internet, or even the company's LAN. Therefore, when some students use k8s to deploy applications, especially those who use k8s as a virtual machine, they will find it troublesome to install software, because the usual process may only be to install the software that needs to be installed in the Dockerfile. Such as vim, curl and so on.
 
-这个项目没有什么代码，仅仅是通过部署一个k8s工作负载，来部署一个私有化的yum源，并且**提供文件浏览器**的管理，这真的很重要，相比于常见的用Nginx 或者httpd来创建一个私有化的源，有文件管理器的web浏览器实在是太好了（当然前提是至少能够通过Nodeport把服务暴露出来）
+This project has no code, just deploys a privatized yum source by deploying a k8s workload, and **provides file browser** management, which is really important, compared to the common use of Nginx or httpd to create a private source, a web browser with a file manager would be great (provided at least the service is exposed via Nodeport, of course).
 
-## 部署
+## Deploy
 
-部署很简单，给出了一个用临时存储的 [yum-with-browser.yaml](yum-with-browser.yaml)，所有的逻辑都在[Dockerfile](Dockerfile), 启动之后，filebrowser 的默认 NodePort 端口是32600，如果 yum-with-browser 是在集群中长期使用的源，那么建议还是用一个持久化存储的方案，将 rpm 包放起来
+Deployment is very simple, given a [yum-with-browser.yaml](yum-with-browser.yaml) with temporary storage, all logic is in [Dockerfile](Dockerfile), after startup, the default NodePort of filebrowser The port is 32600. If yum-with-browser is a long-term source in the cluster, it is recommended to use a persistent storage solution to store the rpm package.
 
 ```shell
 kubectl apply -f yum-with-browser.yaml
 ````
 
-下面是使用的方法，yum 源是通过 Service 的8080端口暴露的
+The following is the method used, the yum source is exposed through port 8080 of the Service.
 
 ```shell
-# 容器内访问只需要svc名，默认端口8080即可
+# access within the container only requires the svc name, and the default port is 8080
 cat >> /etc/yum.repos.d/sre.repo <<EOF
 [sre]
 name=sre yum repos
@@ -27,19 +27,19 @@ baseurl=http://yum-with-browser:8080
 enable=1
 gpgcheck=0
 EOF
-# 上传一个bash的rpm包
+# upload a rpm for bash
 yum --disableexcludes=sre install bash -y
 ```
 
-之后随便创建一个 centos 的 Pod，可以直接进入 yum-with-browser 里的 yum 容器，直接尝试安装，最后的结果如下
+After that, just create a centos Pod, you can directly enter the yum container in yum-with-browser, and try to install it directly. The final result is as follows.
 
 ![img_2.png](img_2.png)
 
 ## Notes
 
-当然不是一个这样的仓库就能够允许在容器里装什么软件都可以的，这里跟容器内本身的基础镜像的Linux版本，内核版本，以及基础镜像里已经有的软件有关系
+Of course, not such a warehouse can allow any software to be installed in the container. This has something to do with the Linux version of the base image in the container itself, the kernel version, and the software already in the base image.
 
-重新编译镜像可以通过下面的命令来实现
+Recompiling the image can be achieved by the following command.
 
 ```shell
 DOCKER_BUILDKIT=1 docker build -t runzhliu/yum-with-browser . --progress=plain
