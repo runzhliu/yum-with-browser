@@ -2,7 +2,7 @@
 
 ## Overview
 
-[yum-with-browser](https://github.com/runzhliu/yum-with-browser) aims to solve some yum source problems in the k8s cluster.
+[yum-with-browser](https://github.com/runzhliu/yum-with-browser) aims to solve some yum source problems in the k8s cluster. For Chinese docs, please refert to [ÖÐÎÄ](./README_ZH.md).
 
 Why is there such a problem? Generally speaking, the k8s cluster only has a cluster network and cannot directly connect to the Internet, or even the company's LAN. Therefore, when some students use k8s to deploy applications, especially those who use k8s as a virtual machine, they will find it troublesome to install software, because the usual process may only be to install the software that needs to be installed in the Dockerfile. Such as vim, curl and so on.
 
