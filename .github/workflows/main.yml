@@ -9,6 +9,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: start minikube
+        run: |
+          # See more in "Installation" https://minikube.sigs.k8s.io/docs/start/
+          curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+          sudo install minikube-linux-amd64 /usr/local/bin/minikube
+          # Github Action limit cpu:2, memory: 6947MB, limit to 2U6G for better resource statistic
+          minikube start --cpus 2 --memory 6144
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       - name: Start minikube
