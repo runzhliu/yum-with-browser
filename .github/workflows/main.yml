@@ -18,6 +18,8 @@ jobs:
           minikube start --cpus 2 --memory 6144
       - name: Interact with the cluster
         run: |
+	  sleep 30s
+	  kubectl get node
           kubectl get serviceaccount
           kubectl create serviceaccount kyuubi
           kubectl create clusterrolebinding kyuubi-role --clusterrole=edit --serviceaccount=default:kyuubi
