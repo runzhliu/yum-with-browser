@@ -26,5 +26,5 @@ jobs:
           github token: ${{ secrets.GITHUB_TOKEN }}
       - name: Interact with the cluster
         run: |
-	  - sleep 30s
-	  - kubectl get nodes
+	  sleep 30s
+	  kubectl get nodes
