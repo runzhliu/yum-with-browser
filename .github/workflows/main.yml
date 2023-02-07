@@ -25,6 +25,4 @@ jobs:
           kubernetes version: 'v1.25.4'
           github token: ${{ secrets.GITHUB_TOKEN }}
       - name: Interact with the cluster
-        run: |
-	  sleep 30s
-	  kubectl get nodes
+        run: 'sleep 30s && kubectl get nodes'
