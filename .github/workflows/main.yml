@@ -11,10 +11,9 @@ jobs:
         uses: actions/checkout@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      - name: Build Kyuubi Docker Image
+      - name: Build Docker Image
         uses: docker/build-push-action@v3
         with:
-          # passthrough CI into build container
           context: .
           file: Dockerfile
           load: true
@@ -26,4 +25,6 @@ jobs:
           kubernetes version: 'v1.25.4'
           github token: ${{ secrets.GITHUB_TOKEN }}
       - name: Interact with the cluster
-        run: kubectl get nodes
+        run:
+	  - sleep 30s
+	  - kubectl get nodes
