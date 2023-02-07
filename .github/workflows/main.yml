@@ -9,6 +9,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Build Kyuubi Docker Image
+        uses: docker/build-push-action@v3
+        with:
+          # passthrough CI into build container
+          context: .
+          file: Dockerfile
+          load: true
+          tags: runzhliu/yum-with-browser:latest
       - name: Setup Minikube
         uses: manusa/actions-setup-minikube@v2.7.2
         with:
