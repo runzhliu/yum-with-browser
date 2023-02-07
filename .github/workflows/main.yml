@@ -17,4 +17,12 @@ jobs:
           # Github Action limit cpu:2, memory: 6947MB, limit to 2U6G for better resource statistic
           minikube start --cpus 2 --memory 6144
       - name: Interact with the cluster
-        run: 'kubectl get nodes'
+        run: |
+          kubectl get serviceaccount
+          kubectl create serviceaccount kyuubi
+          kubectl create clusterrolebinding kyuubi-role --clusterrole=edit --serviceaccount=default:kyuubi
+          kubectl get serviceaccount
+      - name: start kyuubi
+        run: kubectl apply -f https://raw.githubusercontent.com/apache/kyuubi/master/integration-tests/kyuubi-kubernetes-it/src/test/resources/kyuubi-server.yaml
+
+
