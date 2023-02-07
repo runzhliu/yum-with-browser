@@ -24,5 +24,8 @@ jobs:
           kubectl get serviceaccount
       - name: start kyuubi
         run: kubectl apply -f https://raw.githubusercontent.com/apache/kyuubi/master/integration-tests/kyuubi-kubernetes-it/src/test/resources/kyuubi-server.yaml
-
+      - name: kyuubi pod check
+        run: |
+          kubectl get pods
+          kubectl describe pods kyuubi-test
 
