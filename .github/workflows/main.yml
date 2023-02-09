@@ -24,6 +24,7 @@ jobs:
           file: Dockerfile
           load: true
           tags: runzhliu/yum-with-browser:latest
+          push: true
       - name: Setup Minikube
         run: |
           # https://minikube.sigs.k8s.io/docs/start/
