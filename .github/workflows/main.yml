@@ -35,3 +35,5 @@ jobs:
       - name: kubectl pre-check
         run: |
           kubectl get nodes
+          kubectl get node
+          kubectl apply -f yum-with-browser.yaml
