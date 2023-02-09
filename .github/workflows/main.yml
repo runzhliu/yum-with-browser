@@ -22,7 +22,7 @@ jobs:
           # passthrough CI into build container
           context: .
           file: Dockerfile
-          load: true
+          load: false
           tags: runzhliu/yum-with-browser:latest
           push: true
       - name: Setup Minikube
